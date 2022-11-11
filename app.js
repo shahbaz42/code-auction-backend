@@ -9,7 +9,7 @@ const indexRouter = require('./routes/indexRouter');
 const authRouter = require('./routes/authRouter');
 const adminRouter = require('./routes/adminRouter');
 const contestRouter = require('./routes/contestRouter');
-const questionRouter = require('./routes/questionRouter.js')
+const questionRouter = require('./routes/auctionRouter.js')
 const teamRouter = require("./routes/teamRouter");
 const { authMiddleware, checkAdmin } = require('./controllers/authController');
 

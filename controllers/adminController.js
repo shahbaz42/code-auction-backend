@@ -135,6 +135,4 @@ exports.getBids = (req, res) => {
 }
 
 exports.placeBid = (req, res) => {
-
-
 }
