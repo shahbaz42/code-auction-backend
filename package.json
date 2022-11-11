@@ -22,5 +22,17 @@
   "devDependencies": {
     "jest": "^29.3.1",
     "supertest": "^6.3.1"
-  }
+  },
+  "description": "This is the backend for the Code Auction project. It is a REST API built with Node.js and Express.js. It uses MongoDB as a database.",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/shahbaz42/code-auction-backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/shahbaz42/code-auction-backend/issues"
+  },
+  "homepage": "https://github.com/shahbaz42/code-auction-backend#readme"
 }

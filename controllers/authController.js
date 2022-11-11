@@ -1,4 +1,5 @@
 // --------------authMiddleware-----------------
+const Team = require('../models/Team')
 
 // attach team_id (mongodb) with req
 exports.authMiddleware = async (req, res, next) => {
@@ -13,15 +14,79 @@ exports.checkAdmin = (req, res, next) => {
 // -------------- authControllers --------------
 
 exports.register = async (req, res) => {
-    res.send("Register");
+    const { team_name, password, leader_name, leader_email, member_1_name, member_1_email, member_2_name, member_2_email  } = req.body;
+    //const token = password
+    const teamExist = await Team.findOne({team_name: team_name});
+    if (teamExist)
+    return res.status(400).json({ error: "The team name already exists" });
+
+    const emailExist = await Team.findOne({ leader_email: leader_email, member_1_email: member_1_email, member_2_email: member_2_email });
+    if (emailExist)
+    return res.status(400).json({ error: "email already exists" });
+
+    const team = new Team({
+        team_name,
+        password,
+        leader_name,
+        leader_email,
+        member_1_name,
+        member_1_email, 
+        member_2_name, 
+        member_2_email
+    });
+    await team.save();
+    //res.send('id: ' + req.params.id);
+    res.status(200).json({ team });
+    //res.send("Register");
 }
 
 // put Team mongodb id in jwt
 exports.login = async (req, res) => {
-    res.send("Login");
+    //const { //id } = req.params.id;
+    //Team.findOne({ // }).then((team) => {
+        //check below this
+    if (Team) {
+      if (!Team.isLoggedIn) {
+        if (Team.token === password) {
+          jwt.sign(
+            { Team: { id: Team.id } },
+            process.env.JWT_SECRET_KEY,
+           // {expiresIn: "1h" change the time},
+            async (err, token) => {
+              Team.isLoggedIn = true;
+              await Team.save();
+              req.team = Team;
+              res.json({
+                token: token,
+                time: {
+                  hours: 00,
+                  minutes: 30,
+                  seconds: 00,
+                },
+              });
+            }
+          );
+        } else {
+          res.status(401).json({ error: "Password Incorrect" });
+        }
+      } else {
+        res.status(400).json({
+          error: "User Already Logged In",
+        });
+      }
+    } else {
+      res.status(400).json({ error: "No User Exist" });
+    }
+    // res.send("Login");
 }
 
 exports.logout = async (req, res) => {
+    req.session.destroy((err) => {
+        if(err) {
+            return console.log(err);
+        }
+        res.redirect('/');
+    });
     res.send("Logout");
 }
 
@@ -30,5 +95,33 @@ exports.forgotPassword = async (req, res) => {
 }
 
 exports.resetPassword = async (req, res) => {
+    Team.findOne({resetPasswordToken: req.params.token, resetPasswordExpires: {$gt: Date.now()}})
+    .then((team) => {
+        if (!team) return res.status(401).json({message: 'Password reset token is invalid or has expired.'});
+
+        team.password = req.body.password;
+        team.resetPasswordToken = undefined;
+        team.resetPasswordExpires = undefined;
+
+        // Save
+        team.save((err) => {
+            if (err) return res.status(500).json({message: err.message});
+
+            // send email
+            const mailOptions = {
+                to: team.leader_email,
+                from: process.env.ADMIN_EMAIL,
+                subject: "Your password has been changed",
+                text: `Hi ${team.team_name} \n 
+                This is a confirmation that the password for your account ${team.leader_email} has just been changed.\n`
+            };
+
+            sgMail.send(mailOptions, (error, result) => {
+                if (error) return res.status(500).json({message: error.message});
+
+                res.status(200).json({message: 'Your password has been updated.'});
+            });
     res.send("Reset Password");
-}
+});
+});
+};
