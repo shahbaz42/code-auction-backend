@@ -13,8 +13,8 @@ describe("Authentication Tests", () => {
 
     it("POST /auth/register --> should send validation errors", async () => {
         const res = await request(app)
-        .post("/auth/register")
-        .send({});
+            .post("/auth/register")
+            .send({});
 
         expect(res.status).toBe(422);
         expect(res.body.errors).toEqual(
@@ -30,8 +30,8 @@ describe("Authentication Tests", () => {
 
     it("POST /auth/login --> should send validation errors", async () => {
         const res = await request(app)
-        .post("/auth/login")
-        .send({});
+            .post("/auth/login")
+            .send({});
         expect(res.status).toBe(422);
         expect(res.body.errors).toEqual(
             expect.arrayContaining([
@@ -46,8 +46,8 @@ describe("Authentication Tests", () => {
 
     it("POST /auth/password/reset --> should send validation errors", async () => {
         const res = await request(app)
-        .post("/auth/password/reset")
-        .send({});
+            .post("/auth/password/reset")
+            .send({});
         expect(res.status).toBe(422);
         expect(res.body.errors).toEqual(
             expect.arrayContaining([
@@ -62,8 +62,8 @@ describe("Authentication Tests", () => {
 
     it("POST /auth/password/reset/:token --> should send validation errors", async () => {
         const res = await request(app)
-        .post("/auth/password/reset/123")
-        .send({});
+            .post("/auth/password/reset/123")
+            .send({});
         expect(res.status).toBe(422);
         expect(res.body.errors).toEqual(
             expect.arrayContaining([
@@ -78,32 +78,150 @@ describe("Authentication Tests", () => {
 
     it('POST /auth/login --> should return token after login success', async () => {
         const res = await request(app)
-        .post("/auth/login")
-        .send({
-            leader_email: "shahbaz_ali@test.com",
-            password: "123456789",
-        });
+            .post("/auth/login")
+            .send({
+                leader_email: "shahbaz_ali@test.com",
+                password: "123456789",
+            });
 
         expect(res.status).toBe(200);
         expect(res.body.token).toEqual(expect.any(String));
     });
 
     it('POST /auth/login --> should return 401 after login failure', () => {
-        return ( request(app)
+        return (request(app)
             .post("/auth/login")
             .send({
-                email : "shahbaz_ali@dev",
-                password : "wrong_password"
+                email: "shahbaz_ali@dev",
+                password: "wrong_password"
             })
             .expect('Content-Type', /json/)
             .expect(401)
-            .then(response => {
-                expect(response.body).toEqual(
+            .then(res => {
+                expect(res.body).toEqual(
                     expect.objectContaining({
-                        message : expect.any(String)
+                        message: expect.any(String)
                     })
                 )
             })
         )
+    })
+})
+
+describe("Question Tests ", () => {
+    it("GET /question --> should get a list of all the questions.", () => {
+        return (request(app)
+            .get("/question")
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body).toEqual(
+                    expect.arrayContaining(
+                        expect.objectContaining({
+                            name: expect.any(String),
+                            description: expect.any(String),
+                            test_case: expect.any(String),
+                            difficulty: expect.any(String),
+                            base_price: expect.any(String),
+                            bids: expect.arrayContaining(
+                                expect.objectContaining({
+                                    team_id: expect.any(String),
+                                    bid_price: expect.any(String)
+                                })
+                            ),
+                            status: expect.any(String)
+                        })
+                    )
+                )
+            })
+        )
+    })
+
+    it("GET /question --> should get fetch one question.", () => {
+        return (request(app)
+            .get("/question/0") // to-do: to replace the id with mongodb id
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body).toEqual(
+                    expect.objectContaining({
+                        name: expect.any(String),
+                        description: expect.any(String),
+                        test_case: expect.any(String),
+                        difficulty: expect.any(String),
+                        base_price: expect.any(String),
+                        bids: expect.arrayContaining(
+                            expect.objectContaining({
+                                team_id: expect.any(String),
+                                bid_price: expect.any(String)
+                            })
+                        ),
+                        status: expect.any(String)
+                    })
+                )
+            })
+        )
+    })
+
+    it('POST /question --> should send validation errors', async() => {
+        const res = await request(app).post("/question").send({});
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: expect.any(String),
+                    param: expect.any(String),
+                    location: expect.any(String),
+                }),
+            ])
+        );
+    })
+})
+
+describe("Auction tests", () => {
+    it('GET /question/:id/get_bids --> should get a list of all the bids of a question,',()=>{
+        return (request(app)
+            .get("/question/0/get_bids") // to-do: to replace the id with mongodb id
+            .expect('Content-Type', /json/)
+            .expect(200)
+            .then((res) => {
+                expect(res.body).toEqual(
+                    expect.arrayContaining(
+                        expect.objectContaining({
+                            team_id: expect.any(String),
+                            bid_price: expect.any(String)
+                        })
+                    )
+                )
+            })
+        )
+    })
+
+    it('POST /question/:id/place_bid --> should return validation errors', async()=>{
+        const res = await request(app).post("/question/0/place_bid").send({});
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: expect.any(String),
+                    param: expect.any(String),
+                    location: expect.any(String),
+                }),
+            ])
+        );
+    })
+
+    it('POST /question/:id/submit --> should return validation errors', async()=>{
+        const res = await request(app).post("/question/:id/submit").send({});
+        expect(res.status).toBe(422);
+        expect(res.body.errors).toEqual(
+            expect.arrayContaining([
+                expect.objectContaining({
+                    msg: expect.any(String),
+                    param: expect.any(String),
+                    location: expect.any(String),
+                }),
+            ])
+        );
     })
 })
