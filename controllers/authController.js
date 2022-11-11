@@ -1,4 +1,6 @@
 // --------------authMiddleware-----------------
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcryptjs")
 const Team = require('../models/Team')
 
 // attach team_id (mongodb) with req
@@ -10,6 +12,8 @@ exports.authMiddleware = async (req, res, next) => {
 exports.checkAdmin = (req, res, next) => {
     next();
 }
+
+
 
 // -------------- authControllers --------------
 
@@ -34,6 +38,12 @@ exports.register = async (req, res) => {
         member_2_name, 
         member_2_email
     });
+
+    if(this.isModified('password')){ //if password is filled by user only then this works
+      this.password = await bcrypt.hash(this.password , 12)//12 is salt length.//this keyword is used for the global object it belong
+
+  }
+
     await team.save();
     //res.send('id: ' + req.params.id);
     res.status(200).json({ team });
@@ -42,43 +52,31 @@ exports.register = async (req, res) => {
 
 // put Team mongodb id in jwt
 exports.login = async (req, res) => {
-    //const { //id } = req.params.id;
-    //Team.findOne({ // }).then((team) => {
-        //check below this
-    if (Team) {
-      if (!Team.isLoggedIn) {
-        if (Team.token === password) {
-          jwt.sign(
-            { Team: { id: Team.id } },
-            process.env.JWT_SECRET_KEY,
-           // {expiresIn: "1h" change the time},
-            async (err, token) => {
-              Team.isLoggedIn = true;
-              await Team.save();
-              req.team = Team;
-              res.json({
-                token: token,
-                time: {
-                  hours: 00,
-                  minutes: 30,
-                  seconds: 00,
-                },
-              });
-            }
-          );
-        } else {
-          res.status(401).json({ error: "Password Incorrect" });
-        }
-      } else {
-        res.status(400).json({
-          error: "User Already Logged In",
-        });
-      }
-    } else {
-      res.status(400).json({ error: "No User Exist" });
+  try {
+    const {email , password} = req.body; 
+
+    if (!email || !password){
+        return res.status(400).json({error : "please fill all the details"})  //validation of filling all the fields;;
     }
+
+    const signin = await Team.findOne({email: email});
+    
+    if (signin){
+    const match = await bcrypt.compare(password, signin.password);  //direct hashed pass match ni ker skte , isliye filled pass, saved hashed pass ko compare krne ke liye iska use kiya.
+    //const token = await signin.genauthToken();//passing token
+    //console.log(token);
+    
+    if(!match){        
+        res.status(400).json({error :"invalid credentials.pass"})
+    }
+    else{
+        let tokenJ = jwt.sign({_id: this._id}, process.env.SECRET_KEY)
+    }}else{
+        res.status(400).json({error :"invalid credetials"})
+    }
+}catch(err){console.log(err);
     // res.send("Login");
-}
+}}
 
 exports.logout = async (req, res) => {
     req.session.destroy((err) => {
@@ -87,7 +85,7 @@ exports.logout = async (req, res) => {
         }
         res.redirect('/');
     });
-    res.send("Logout");
+    // res.send("Logout");
 }
 
 exports.forgotPassword = async (req, res) => {
@@ -121,7 +119,7 @@ exports.resetPassword = async (req, res) => {
 
                 res.status(200).json({message: 'Your password has been updated.'});
             });
-    res.send("Reset Password");
+    // res.send("Reset Password");
 });
 });
 };
