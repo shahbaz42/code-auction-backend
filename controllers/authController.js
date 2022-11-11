@@ -53,24 +53,23 @@ exports.register = async (req, res) => {
 // put Team mongodb id in jwt
 exports.login = async (req, res) => {
   try {
-    const {email , password} = req.body; 
+    const {leader_email , password} = req.body; 
 
-    if (!email || !password){
+    if (!leader_email || !password){
         return res.status(400).json({error : "please fill all the details"})  //validation of filling all the fields;;
     }
 
-    const signin = await Team.findOne({email: email});
+    const signin = await Team.findOne({leader_email: leader_email});
     
     if (signin){
-    const match = await bcrypt.compare(password, signin.password);  //direct hashed pass match ni ker skte , isliye filled pass, saved hashed pass ko compare krne ke liye iska use kiya.
-    //const token = await signin.genauthToken();//passing token
-    //console.log(token);
+    const match = await bcrypt.compare(password, signin.password);  
     
     if(!match){        
         res.status(400).json({error :"invalid credentials.pass"})
     }
     else{
         let tokenJ = jwt.sign({_id: this._id}, process.env.SECRET_KEY)
+        
     }}else{
         res.status(400).json({error :"invalid credetials"})
     }
