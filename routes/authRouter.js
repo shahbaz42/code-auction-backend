@@ -36,14 +36,12 @@ router.post('/password/reset',
   authController.forgotPassword
 );
 
-router.post('/password/reset/:token',
+router.post('/password/reset/:team_id/:token',
   [
     body("new_password").exists().withMessage("New password is required"),
   ],
   validateRequest,
   authController.resetPassword
 );
-
-router.get('/logout', authController.logout);
 
 module.exports = router;
