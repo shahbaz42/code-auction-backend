@@ -36,30 +36,3 @@ app.use('/question', authMiddleware, questionRouter);
 app.use('/team', authMiddleware, teamRouter)
 
 module.exports = app;
-
-
-/*
-API : Plans
-
-Auth APIs : 
-1. (routing done) /auth/register | POST | Register a new team
-2. (routing done) /auth/login | POST | Login a team
-3. (routing done) /auth/logout | GET | Logout a team
-4. (routing done) /auth/password/reset | POST | Send a reset password link to the team's leader email
-5. (routing done) /auth/password/reset/:token | POST | Reset the password of the team
-
-Question APIs :
-1. (routing done) /question | GET | Get a list the questions 
-2. (routing done) /question/:id | GET | Get a question by id
-3. (routing done) /question | POST | Create a new question | Admin only
-4. (routing done) /question/:id | patch | Update a question by id | Admin only
-5. (routing done) /question/:id | DELETE | Delete a question by id | Admin only
-6. (routing done) /question/:id/get_bids | Get all bids of a question 
-6. (routing done) /question/:id/place_bid | POST | Place bid for a question.
-7. (routing done) /question/:id/submit | POST | Submit a solution for a question | fetch team id from token | check if the question is assigned to the team 
-
-Team APIs : 
-1. (routing done) /team | GET | Get a list of all teams
-2. () /team/:id | GET | Get team by id
-
-*/

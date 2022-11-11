@@ -1,6 +1,6 @@
 const Question = require("../models/Question");
 
-exports.sendQuestions = async (req, res) => {
+exports.sendQuestionsToAdmin = async (req, res) => {
     if (typeof (req.params.id) === 'undefined') {
         try {
             const questions = await Question.find();

@@ -5,11 +5,11 @@ const { validateRequest } = require('../utils/validator');
 const questionController = require('../controllers/questionController');
 const authController = require('../controllers/authController')
 
-// --------------------------- Question Routes -------------------------------
+// ---------------------------Admin Question Routes -------------------------------
 
-router.get("/question/:id?", questionController.sendQuestions);
+router.get("/question/:id?", questionController.sendQuestionsToAdmin);
 
-router.post("/", 
+router.post("/question", 
     authController.authMiddleware,
     authController.checkAdmin,
     [
@@ -37,7 +37,7 @@ router.patch("/question/:id",
     questionController.updateQuestion
 );
 
-router.delete("question/:id",
+router.delete("/question/:id",
     authController.authMiddleware,
     authController.checkAdmin,
     [
@@ -46,5 +46,7 @@ router.delete("question/:id",
     validateRequest,
     questionController.deleteQuestion
 );
+
+
 
 module.exports = router
