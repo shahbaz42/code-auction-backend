@@ -9,7 +9,7 @@ const indexRouter = require('./routes/indexRouter');
 const authRouter = require('./routes/authRouter');
 const adminRouter = require('./routes/adminRouter');
 const contestRouter = require('./routes/contestRouter');
-const questionRouter = require('./routes/auctionRouter.js')
+const auctionRouter = require('./routes/auctionRouter.js')
 const teamRouter = require("./routes/teamRouter");
 const { authMiddleware, checkAdmin } = require('./controllers/authController');
 
@@ -32,7 +32,7 @@ app.use('/', indexRouter);
 app.use('/auth', authRouter);
 app.use('/admin', authMiddleware, checkAdmin, adminRouter);
 app.use('/contest', authMiddleware, contestRouter);
-app.use('/question', authMiddleware, questionRouter);
+app.use('/auction', authMiddleware, auctionRouter);
 app.use('/team', authMiddleware, teamRouter)
 
 module.exports = app;

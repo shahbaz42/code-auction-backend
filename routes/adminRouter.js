@@ -48,5 +48,10 @@ router.delete("/question/:id",
 );
 
 
+// ---------------------------Admin Auction Routes -------------------------------
+
+router.get("/question/startAuction/:qnid", questionController.startAuction);
+router.get("/question/stopAuction/:qnid", questionController.stopAuction);
+
 
 module.exports = router

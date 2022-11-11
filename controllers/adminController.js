@@ -1,5 +1,42 @@
 const Question = require("../models/Question");
 
+const start_auction = async ( question_id ) => {
+    // To-do integrate Socket.io
+    return new Promise( async (resolve, reject) => {
+        try {
+            const question = await Question.findById(question_id);
+            if(!question) return reject("Question not found");
+            if (question.status === "bidding") return reject("Auction already started");
+            question.status = "bidding";
+            await question.save();
+            return resolve(question);
+        } catch (err) {
+            return reject(err.message);
+        }
+    });
+};
+
+const stop_auction = async ( question_id ) => {
+};
+
+exports.startAuction = async (req, res) => {
+    try {
+        const question = await start_auction(req.params.qnid);
+        return res.status(200).json({
+            message: "Auction started",
+            question
+        });
+    } catch (err) {
+        return res.status(400).json({
+            message: err
+        });
+    }
+};
+
+exports.stopAuction = async (req, res) => {
+    
+};
+
 exports.sendQuestionsToAdmin = async (req, res) => {
     if (typeof (req.params.id) === 'undefined') {
         try {

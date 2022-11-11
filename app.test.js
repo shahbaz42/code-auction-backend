@@ -62,7 +62,7 @@ describe("Authentication Tests", () => {
 
     it("POST /auth/password/reset/:token --> should send validation errors", async () => {
         const res = await request(app)
-            .post("/auth/password/reset/123")
+            .post("/auth/password/reset/123/345")
             .send({});
         expect(res.status).toBe(422);
         expect(res.body.errors).toEqual(
