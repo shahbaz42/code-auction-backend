@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
 const teamSchema = new mongoose.Schema({
     team_name: {
@@ -69,6 +70,15 @@ const teamSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
+});
+
+// pre schema for hashing password
+teamSchema.pre("save", async function (next) {
+    const team = this;
+    if (team.isModified("password")) {
+        team.password = await bcrypt.hash(team.password, 8);
+    }
+    next();
 });
 
 const Team = mongoose.model("Team", teamSchema);
