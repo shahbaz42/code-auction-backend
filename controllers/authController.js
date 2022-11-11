@@ -66,6 +66,33 @@ exports.register = async (req, res) => {
 
 // put Team mongodb id in jwt
 exports.login = async (req, res) => {
+    const { leader_email, password } = req.body;
+
+    // check if team exists
+    const team = await Team.findOne({ leader_email });
+    if (!team) {
+        return res.status(401).json({
+            message: "Leader email does not exist"
+        });
+    }
+
+    // check if password is correct
+    const isPasswordCorrect = await bcrypt.compare(password, team.password);
+    if (!isPasswordCorrect) {
+        return res.status(401).json({
+            message: "Incorrect password"
+        });
+    }
+
+    // generate jwt
+    const token = jwt.sign({ team_id: team._id }, process.env.JWT_SECRET, {
+        expiresIn: "1d"
+    });
+
+    res.status(200).json({
+        message: "Login successful",
+        token
+    });
 }
 
 exports.logout = async (req, res) => {

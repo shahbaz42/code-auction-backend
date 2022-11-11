@@ -80,7 +80,7 @@ describe("Authentication Tests", () => {
         const res = await request(app)
             .post("/auth/login")
             .send({
-                leader_email: "shahbaz_ali@test.com",
+                leader_email: "shahbaz_ali@dev",
                 password: "123456789",
             });
 
@@ -88,23 +88,18 @@ describe("Authentication Tests", () => {
         expect(res.body.token).toEqual(expect.any(String));
     });
 
-    it('POST /auth/login --> should return 401 after login failure', () => {
-        return (request(app)
+    it('POST /auth/login --> should return 401 after login failure', async () => {
+        const res = await request(app)
             .post("/auth/login")
             .send({
-                email: "shahbaz_ali@dev",
-                password: "wrong_password"
-            })
-            .expect('Content-Type', /json/)
-            .expect(401)
-            .then(res => {
-                expect(res.body).toEqual(
-                    expect.objectContaining({
-                        message: expect.any(String)
-                    })
-                )
-            })
-        )
+                leader_email: "shahbaz_ali@dev",
+                password: "1234567sdf89",
+            });
+
+        expect(res.status).toBe(401);
+        expect(res.body).toEqual({
+            message: expect.any(String),
+        });
     })
 })
 
