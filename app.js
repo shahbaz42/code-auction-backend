@@ -7,8 +7,11 @@ const mongoose = require('mongoose');
 
 const indexRouter = require('./routes/indexRouter');
 const authRouter = require('./routes/authRouter');
+const adminRouter = require('./routes/adminRouter');
+const contestRouter = require('./routes/contestRouter');
 const questionRouter = require('./routes/questionRouter.js')
 const teamRouter = require("./routes/teamRouter");
+const { authMiddleware, checkAdmin } = require('./controllers/authController');
 
 const app = express();
 
@@ -27,8 +30,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/auth', authRouter);
-app.use('/question', questionRouter);
-app.use('/team', teamRouter)
+app.use('/admin', authMiddleware, checkAdmin, adminRouter);
+app.use('/contest', authMiddleware, contestRouter);
+app.use('/question', authMiddleware, questionRouter);
+app.use('/team', authMiddleware, teamRouter)
 
 module.exports = app;
 
