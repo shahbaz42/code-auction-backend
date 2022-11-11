@@ -5,6 +5,10 @@ const questionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    img_url: {
+        type: String,
+        default: "na"
+    },
     description: {
         type: String,
         required: true
@@ -49,3 +53,5 @@ const questionSchema = new mongoose.Schema({
 });
 
 const Question = mongoose.model("Question", questionSchema);
+
+module.exports = Question;

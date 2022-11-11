@@ -27,7 +27,6 @@ const teamSchema = new mongoose.Schema({
     member_1_email: {
         type: String,
         required: true,
-        unique: true
     },
     member_2_name: {
         type: String,
@@ -36,7 +35,6 @@ const teamSchema = new mongoose.Schema({
     member_2_email: {
         type: String,
         required: true,
-        unique: true
     },
     coins: {
         type: Number,
