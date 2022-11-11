@@ -6,12 +6,53 @@ const jwt = require('jsonwebtoken');
 
 // attach team_id (mongodb) with req
 exports.authMiddleware = async (req, res, next) => {
-    next();
+    try {
+        const authorization_header_token = req.headers.authorization;
+        if (!authorization_header_token) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        const token = authorization_header_token.split(" ")[1];
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // todo : populate team with assigned questions
+        const team = await Team.findById(decoded.team_id).select("-password");
+        if (!team) {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+
+        req.team = team;
+        console.log(team);
+        next();
+        
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Something went wrong"
+        });
+    }
 }
 
 // admin is the one with leader_email === process.env.ADMIN_EMAIL
 exports.checkAdmin = (req, res, next) => {
-    next();
+    try {
+        if (req.team.leader_email === process.env.ADMIN_EMAIL) {
+            next();
+        } else {
+            return res.status(401).json({
+                message: "Unauthorized"
+            });
+        }
+    } catch (error) {
+        console.log("error at checkAdmin.", error);
+        res.status(500).json({
+            message: "Something went wrong"
+        });
+    }
 }
 
 // -------------- authControllers --------------
