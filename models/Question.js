@@ -32,7 +32,7 @@ const questionSchema = new mongoose.Schema({
     },
     bids: [
         {
-            team_id: {
+            bid_by: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Team"
             }, 
@@ -44,9 +44,17 @@ const questionSchema = new mongoose.Schema({
     ],
     status: {
         type: String,
-        enum: ["private", "bidding", "sold"],
+        enum: ["private", "bidding", "sold", "unsold"],
         default: "private"
     },
+    sold_to: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Team"
+    },
+    sold_at: {
+        type: Number,
+        default: 0
+    }
 },
 {
     timestamps: true
