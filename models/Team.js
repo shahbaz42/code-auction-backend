@@ -36,7 +36,7 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    coins: {
+    balance: {
         type: Number,
         default: 500
     },
