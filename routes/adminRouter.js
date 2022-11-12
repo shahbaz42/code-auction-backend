@@ -9,6 +9,7 @@ const authController = require('../controllers/authController')
 
 router.get("/question/:id?", questionController.sendQuestionsToAdmin);
 
+// To-do : to implement pagination and filters
 router.post("/question", 
     authController.authMiddleware,
     authController.checkAdmin,
@@ -50,8 +51,10 @@ router.delete("/question/:id",
 
 // ---------------------------Admin Auction Routes -------------------------------
 
-router.get("/question/startAuction/:qnid", questionController.startAuction);
-router.get("/question/stopAuction/:qnid", questionController.stopAuction);
+router.get("/question/:qnid/startAuction/", questionController.startAuction);
+
+// to-do
+router.get("/question/:qnid/stopAuction/", questionController.stopAuction);
 
 
 module.exports = router

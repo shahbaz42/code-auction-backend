@@ -1,30 +1,16 @@
 const Question = require("../models/Question");
-
-const start_auction = async ( question_id ) => {
-    // To-do integrate Socket.io
-    return new Promise( async (resolve, reject) => {
-        try {
-            const question = await Question.findById(question_id);
-            if(!question) return reject("Question not found");
-            if (question.status === "bidding") return reject("Auction already started");
-            question.status = "bidding";
-            await question.save();
-            return resolve(question);
-        } catch (err) {
-            return reject(err.message);
-        }
-    });
-};
-
-const stop_auction = async ( question_id ) => {
-};
+const Team = require("../models/Team");
 
 exports.startAuction = async (req, res) => {
     try {
-        const question = await start_auction(req.params.qnid);
+        const question_id = req.params.qnid;
+        const question = await Question.findById(question_id);
+        if(!question) return res.status(404).json({message: "Question not found"});
+        if (question.status === "bidding") return res.status(400).json({message: "Auction already started"});
+        question.status = "bidding";
+        await question.save();
         return res.status(200).json({
-            message: "Auction started",
-            question
+            message: `Auction started for question ${question.name}`
         });
     } catch (err) {
         return res.status(400).json({
@@ -34,7 +20,85 @@ exports.startAuction = async (req, res) => {
 };
 
 exports.stopAuction = async (req, res) => {
-    
+    try {
+        const question_id = req.params.qnid;
+
+        // populate the question bids array containing the bid_by and bid_price populate bid_by with team_name
+        const question = await Question.findById(question_id).populate({
+            path: "bids",
+            populate: {
+                path: "bid_by",
+                select: "team_name balance"
+            }
+        });
+
+        if(!question) return res.status(404).json({message: "Question not found"});
+        if (question.status === "private") return res.status(400).json({message: "Auction has not started yet"});
+        if (question.status === "sold") return res.status(400).json({message: "Auction already stopped"});
+
+        const bids = question.bids;
+
+        // if there is no bid then make the status unsold
+        if (bids.length === 0) {
+            question.status = "unsold";
+            await question.save();
+            return res.status(200).json({
+                message: `Auction stopped for question ${question.name}, qn not sold`
+            });
+        }
+
+        var sold = false;
+        var sold_to = null;
+        var sold_to_team_name = null;
+        var sold_at = null;
+        // // loop and check if team has enough balance if yes then mark sold and break
+        for (var i = 0; i < bids.length; i++) {
+            if (bids[i].bid_by.balance >= bids[i].bid_price) {
+                sold = true;
+                sold_to = bids[i].bid_by._id;
+                sold_to_team_name = bids[i].bid_by.team_name;
+                sold_at = bids[i].bid_price;
+                break;
+            }
+        }
+
+        if (sold) {
+            // deduct the balance from the team and push to assigned_questions
+            const team = await Team.findById(sold_to);
+            team.balance -= sold_at;
+            const assigned_question = {
+                question_id: question._id,
+                status: "pending",
+                submittions: []
+            }
+            team.assigned_questions.push(assigned_question);
+            await team.save();
+
+            // update the question status to sold
+            question.status = "sold";
+            question.sold_to = sold_to;
+            question.sold_to_team_name = sold_to_team_name;
+            question.sold_at = sold_at;
+            await question.save();
+
+            return res.status(200).json({
+                message: `Auction stopped for question ${question.name}, qn sold to ${sold_to_team_name} at ${sold_at}`
+            });
+        }
+
+        // if no team has enough balance then mark unsold
+        question.status = "unsold";
+        await question.save();
+        return res.status(200).json({
+            message: `Auction stopped for question ${question.name}, qn not sold`
+        });
+
+    } catch (err) {
+        console.log(err);
+        return res.status(400).json({
+            message: err
+        });
+    }
 };
 
 exports.sendQuestionsToAdmin = async (req, res) => {
