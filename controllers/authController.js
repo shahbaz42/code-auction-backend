@@ -29,7 +29,13 @@ exports.authMiddleware = async (req, res, next) => {
         next();
 
     } catch (error) {
-        console.log(error);
+        if (error instanceof jwt.TokenExpiredError) {
+            return res.status(401).json({
+                message: "Token expired"
+            });
+        }
+        
+        console.log(typeof(error));
         res.status(500).json({
             message: "Something went wrong"
         });
