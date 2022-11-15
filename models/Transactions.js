@@ -7,9 +7,8 @@ const transactionSchema = new mongoose.Schema({
         required: true
     },
     from: {
-        type: String,
-        default: "admin",
-        required: true
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Team"
     },
     amount: {
         type: Number,
@@ -25,3 +24,5 @@ const transactionSchema = new mongoose.Schema({
 });
 
 const Transaction = mongoose.model("Transaction", transactionSchema);
+
+module.exports = Transaction

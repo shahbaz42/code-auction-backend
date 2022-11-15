@@ -34,7 +34,7 @@ exports.authMiddleware = async (req, res, next) => {
                 message: "Token expired"
             });
         }
-        
+
         console.log(typeof(error));
         res.status(500).json({
             message: "Something went wrong"
