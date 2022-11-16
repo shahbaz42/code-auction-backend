@@ -1,6 +1,7 @@
 const Question = require("../models/Question");
 const Team = require("../models/Team");
 
+// To-do : Implement pagination
 exports.getAvailableQuestions = async (req, res) => {
     try {
         // all questions except private
@@ -35,6 +36,7 @@ exports.getOneQuestion = async (req, res) => {
     }
 }
 
+// To-do : Implement pagination
 exports.getBids = async (req, res) => {
     try {
         const id = req.params.id;

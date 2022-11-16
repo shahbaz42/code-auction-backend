@@ -148,6 +148,7 @@ exports.stopAuction = async (req, res) => {
     }
 };
 
+// To-do : Implement pagination
 exports.sendQuestionsToAdmin = async (req, res) => {
     if (typeof (req.params.id) === 'undefined') {
         try {
