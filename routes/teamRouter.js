@@ -6,6 +6,6 @@ const questionController = require('../controllers/adminController');
 const authController = require('../controllers/authController')
 const teamController = require("../controllers/teamController");
 
-router.get('/:id?', teamController.sendTeamsData);
+router.get('/', teamController.sendTeamsData);
 
 module.exports = router
