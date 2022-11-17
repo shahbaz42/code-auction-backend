@@ -7,5 +7,7 @@ const authController = require('../controllers/authController')
 const teamController = require("../controllers/teamController");
 
 router.get('/', teamController.sendTeamsData);
+// to-complete get assigned questions
+router.get('/getAssignedQuestions', teamController.getAssignedQuestions);
 
 module.exports = router
