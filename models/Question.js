@@ -26,6 +26,10 @@ const questionSchema = new mongoose.Schema({
         enum: ["easy", "medium", "hard"],
         required: true
     },
+    points : {
+        type: Number,
+        default: 100
+    },
     base_price: {
         type: Number,
         required: true
