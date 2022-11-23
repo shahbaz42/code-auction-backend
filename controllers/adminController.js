@@ -93,6 +93,8 @@ exports.stopAuction = async (req, res) => {
 
             const assigned_question = {
                 question_id: question._id,
+                assigning_time: Date.now(),
+                time_to_solve: undefined,
                 status: "pending",
                 submittions: []
             }
