@@ -46,16 +46,22 @@ const teamSchema = new mongoose.Schema({
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "Question"
             },
+            assigning_time: {
+                type: Number,
+                default: Date.now()
+            },
+            time_to_solve: {
+                type: Number,
+            },
             status: {
                 type: String,
                 enum: ["pending", "solved"],
                 default: "pending"
             },
-            submittions: [
+            submissions: [
                 {
-                    attempted_solution: {
-                        type: String
-                    },
+                    type: mongoose.Schema.Types.ObjectId,
+                    ref: "Submission"
                 }
             ]
         }
