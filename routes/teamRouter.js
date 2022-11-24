@@ -8,12 +8,5 @@ const teamController = require("../controllers/teamController");
 
 router.get('/', teamController.sendTeamsData);
 router.get('/assignedQuestions', teamController.getAssignedQuestions);
-router.post('/submitAnswer/:qn_id',
-    [
-        param('qn_id').exists().withMessage("Question id is required"),
-        body('attempted_solution').exists().withMessage("Attempted solution is required"),
-        body('language_id').exists().withMessage("Language id is required"),
-    ],    
-teamController.checkIfQuestionIsAssigned, teamController.submitAnswer);
 
 module.exports = router
