@@ -1,6 +1,8 @@
 const Question = require("../models/Question");
 const Team = require("../models/Team");
 const Transaction = require("../models/Transactions");
+const axios = require('axios');
+const code_compiler = require('../utils/code_compiler');
 
 exports.create_Transaction = async (original_data, updated_data) => {
     return new Promise( async(resolve, reject) => {
@@ -276,6 +278,28 @@ exports.deleteQuestion = async (req, res) => {
         res.status(500).json({
             message: "Something went wrong"
         });
+    }
+}
+
+// ---------------------------Admin Compiler Controllers -------------------------------
+
+exports.sendCompilerInfo = async (req, res, next) => {
+    try {
+        const sysinfo = await code_compiler.get_system_info();
+        res.status(500).json({
+            message : "Compiler is up and running.",
+            sysinfo
+        });
+    } catch (err) {
+        console.log(err);
+        if (err instanceof axios.AxiosError) {
+            return res.status(500).json({
+                message : "Server is down."
+            }) 
+        }
+        return res.status(500).json({
+            message : "Something went wrong."
+        })
     }
 }
 

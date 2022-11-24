@@ -59,6 +59,6 @@ router.get("/question/:qnid/stopAuction/", adminController.stopAuction);
 
 // ---------------------------Admin Compiler Routes -------------------------------
 
-router.get("/compiler/getInfo", )
+router.get("/compiler/getInfo", adminController.sendCompilerInfo)
 
 module.exports = router
