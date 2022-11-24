@@ -2,12 +2,12 @@ const express = require('express');
 const router = express.Router();
 const { body, query, param } = require('express-validator');
 const { validateRequest } = require('../utils/validator');
-const questionController = require('../controllers/adminController');
+const adminController = require('../controllers/adminController');
 const authController = require('../controllers/authController')
 
 // ---------------------------Admin Question Routes -------------------------------
 
-router.get("/question/:id?", questionController.sendQuestionsToAdmin);
+router.get("/question/:id?", adminController.sendQuestionsToAdmin);
 
 // To-do : to implement pagination and filters
 router.post("/question", 
@@ -22,7 +22,7 @@ router.post("/question",
         body("base_price").exists().withMessage("Base price is required.")
     ],
     validateRequest,
-    questionController.createQuestion
+    adminController.createQuestion
 ); 
 
 // this is the route for the admin to update one field of the question
@@ -35,7 +35,7 @@ router.patch("/question/:id",
         body("value").exists().withMessage("Value to be updated is required")
     ],
     validateRequest,
-    questionController.updateQuestion
+    adminController.updateQuestion
 );
 
 router.delete("/question/:id",
@@ -45,16 +45,20 @@ router.delete("/question/:id",
         param("id").exists().withMessage("Question id is required")
     ],
     validateRequest,
-    questionController.deleteQuestion
+    adminController.deleteQuestion
 );
 
 
 // ---------------------------Admin Auction Routes -------------------------------
 
-router.get("/question/:qnid/startAuction/", questionController.startAuction);
+router.get("/question/:qnid/startAuction/", adminController.startAuction);
 
 // to-do
-router.get("/question/:qnid/stopAuction/", questionController.stopAuction);
+router.get("/question/:qnid/stopAuction/", adminController.stopAuction);
 
+
+// ---------------------------Admin Compiler Routes -------------------------------
+
+router.get("/compiler/getInfo", )
 
 module.exports = router
