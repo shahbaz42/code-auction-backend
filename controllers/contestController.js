@@ -2,6 +2,25 @@ const Team = require('../models/Team');
 const Question = require('../models/Question');
 const Submission = require('../models/Submission');
 const code_compiler = require('../utils/code_compiler');
+const axios = require("axios");
+
+exports.sendCompilerStatus = async (req, res, next) => {
+    try {
+        await code_compiler.get_system_info();
+        res.status(500).json({
+            message : "Compiler is up and running."
+        });
+    } catch (err) {
+        if (err instanceof axios.AxiosError) {
+            return res.status(500).json({
+                message : "Server is down."
+            }) 
+        }
+        return res.status(500).json({
+            message : "Something went wrong."
+        })
+    }
+}
 
 exports.sendLanguages = async (req, res, next) => {
     try {

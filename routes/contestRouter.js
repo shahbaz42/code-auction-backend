@@ -7,6 +7,7 @@ const authController = require('../controllers/authController')
 const contestController = require("../controllers/contestController");
 const teamController = require("../controllers/teamController");
 
+router.get('/compiler_status', contestController.sendCompilerStatus);
 router.get('/languages', contestController.sendLanguages);
 router.post('/submitAnswer/:qn_id',
     [

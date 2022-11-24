@@ -12,6 +12,19 @@ const WAIT = true;
 // const output =
 // `Hello World!`
 
+exports.get_system_info = async () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const response = await axios.get(`${host}/system_info`, {
+                timeout : 10000
+            });
+            resolve(response.data);
+        } catch (error) {
+            reject(error);
+        }
+    })
+}
+
 exports.get_languages = async () => {
     return new Promise(async (resolve, reject) => {
         try {
