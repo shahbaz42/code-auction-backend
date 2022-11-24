@@ -7,7 +7,6 @@ const authController = require('../controllers/authController')
 const teamController = require("../controllers/teamController");
 
 router.get('/', teamController.sendTeamsData);
-router.get('/languages', teamController.sendLanguages);
 router.get('/assignedQuestions', teamController.getAssignedQuestions);
 router.post('/submitAnswer/:qn_id',
     [
