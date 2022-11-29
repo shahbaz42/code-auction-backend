@@ -5,7 +5,7 @@ const Team = require("../models/Team");
 exports.getAvailableQuestions = async (req, res) => {
     try {
         // all questions except private
-        const questions = await Question.find({status: {$in: ["bidding", "sold", "unsold"]}})
+        const questions = await Question.find({status: {$in: ["bidding", "sold", "unsold"]}}).sort('-createdAt')
             .select("name description difficulty base_price status");
         res.status(200).json({
             questions
