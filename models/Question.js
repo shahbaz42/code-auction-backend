@@ -21,6 +21,18 @@ const questionSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    private_test_cases : [
+        {
+            input: {
+                type: String,
+                required: true
+            },
+            output: {
+                type: String,
+                required: true
+            }
+        }
+    ],
     difficulty: {
         type: String,
         enum: ["easy", "medium", "hard"],
