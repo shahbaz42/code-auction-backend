@@ -188,6 +188,7 @@ exports.createQuestion = async (req, res) => {
         description,
         img_url,
         test_case,
+        private_test_cases,
         test_case_output,
         difficulty,
         base_price
@@ -198,6 +199,7 @@ exports.createQuestion = async (req, res) => {
         description,
         img_url,
         test_case,
+        private_test_cases,
         test_case_output,
         difficulty,
         base_price,
