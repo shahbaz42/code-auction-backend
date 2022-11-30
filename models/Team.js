@@ -44,7 +44,7 @@ const teamSchema = new mongoose.Schema({
     },
     balance: {
         type: Number,
-        default: 2000 // change later
+        default: 500 // change later
     },
     assigned_questions: [
         {
