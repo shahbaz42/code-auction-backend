@@ -14,6 +14,8 @@ router.post('/register',
     body('member_1_email').exists().withMessage('Member 1 email is required'),
     body('member_2_name').exists().withMessage('Member 2 name is required'),
     body('member_2_email').exists().withMessage('Member 2 email is required'),
+    body('member_3_name').exists().withMessage('Member 3 name is required'),
+    body('member_3_email').exists().withMessage('Member 3 email is required'),
   ], 
   validateRequest,
   authController.register

@@ -73,7 +73,9 @@ exports.register = async (req, res) => {
             member_1_name,
             member_1_email,
             member_2_name,
-            member_2_email
+            member_2_email,
+            member_3_name,
+            member_3_email,
         } = req.body;
 
         const team = new Team({
@@ -84,7 +86,9 @@ exports.register = async (req, res) => {
             member_1_name,
             member_1_email,
             member_2_name,
-            member_2_email
+            member_2_email,
+            member_3_name,
+            member_3_email,
         });
 
         //check if team already exists

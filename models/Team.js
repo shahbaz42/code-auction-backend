@@ -36,6 +36,12 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    member_3_name: {
+        type: String,
+    },
+    member_3_email: {
+        type: String,
+    },
     balance: {
         type: Number,
         default: 2000 // change later
