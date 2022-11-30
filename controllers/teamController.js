@@ -76,11 +76,14 @@ exports.getOneAssignedQuestion = async (req, res, next) => {
         
         const submissions = await Submission.find({ submission_for: qn_id, submitted_by: id })
 
-        const last_submission = submissions[0];
+        if(submissions.length > 0) {
+            response.last_submission = submissions[0].result.source_code;
+        } else {
+            response.last_submission = "";
+        }
 
         response.question = question;
-        response.last_submission = last_submission.result.source_code;
-        response.last_accepted_submission = null;
+        response.last_accepted_submission = "";
 
         submissions.forEach((submission) => {
             if (submission.status.id == 3) {
@@ -88,9 +91,6 @@ exports.getOneAssignedQuestion = async (req, res, next) => {
                 return;
             }
         })
-
-
-        // question["last_submission"] = submission.result.source_code;
 
         res.status(200).json(response);
 
