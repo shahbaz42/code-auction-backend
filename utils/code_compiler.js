@@ -118,8 +118,8 @@ exports.get_immediete_result = async (source_code, language_id, stdin, expected_
     return new Promise(async (resolve, reject) => {
         try {
             const submission = await exports.send_submission(source_code, language_id, stdin, expected_output);
-            const response = await exports.convert_response_to_string(submission);
-            resolve(response);
+            // const response = await exports.convert_response_to_string(submission);
+            resolve(submission);
         }
         catch (error) {
             reject(error);
