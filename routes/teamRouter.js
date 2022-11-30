@@ -8,5 +8,6 @@ const teamController = require("../controllers/teamController");
 
 router.get('/', teamController.sendTeamsData);
 router.get('/assignedQuestions', teamController.getAssignedQuestions);
+router.get('/assignedQuestion/:qn_id', teamController.checkIfQuestionIsAssigned, teamController.getOneAssignedQuestion);
 
 module.exports = router
