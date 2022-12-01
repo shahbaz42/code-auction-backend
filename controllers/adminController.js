@@ -29,8 +29,10 @@ exports.startAuction = async (req, res) => {
         if (question.status === "bidding") return res.status(400).json({message: "Auction already started"});
         question.status = "bidding";
         await question.save();
+        const msg = `Auction started for question : ${question.name}`;
+        req.io.emit("auction_started", msg );
         return res.status(200).json({
-            message: `Auction started for question ${question.name}`
+            message: msg
         });
     } catch (err) {
         return res.status(400).json({
@@ -67,6 +69,7 @@ exports.stopAuction = async (req, res) => {
         if (bids.length === 0) {
             question.status = "unsold";
             await question.save();
+            req.io.emit("auction_stopped_not_sold", "Auction stopped. No bids placed." );
             return res.status(200).json({
                 message: `Auction stopped for question ${question.name}, qn not sold`
             });
@@ -126,8 +129,9 @@ exports.stopAuction = async (req, res) => {
             // pass to create transaction function to create transaction.
             try {
                 await exports.create_Transaction(original_data, updated_data);
+                req.io.emit("auction_stopped_sold", `Auction stopped for question : ${question.name}, qn sold to ${sold_to_team_name} at ${sold_at}` );
                 return res.status(200).json({
-                    message: `Auction stopped for question ${question.name}, qn sold to ${sold_to_team_name} at ${sold_at}`
+                    message: `Auction stopped for question : ${question.name}, qn sold to ${sold_to_team_name} at ${sold_at}`
                 });
             } catch (error) {
                 console.log(error);
@@ -140,6 +144,7 @@ exports.stopAuction = async (req, res) => {
         // if no team has enough balance then mark unsold
         question.status = "unsold";
         await question.save();
+        req.io.emit("auction_stopped_not_sold", `Auction stopped for question : ${question.name}, qn not sold. no team has sufficient money.` );
         return res.status(200).json({
             message: `Auction stopped for question ${question.name}, qn not sold`
         });
