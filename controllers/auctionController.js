@@ -118,6 +118,7 @@ exports.placeBid = async (req, res) => {
         question.bids.unshift(bid);
         await question.save();
 
+        req.io.emit("new_bid", "New bid placed");
         return res.status(200).json({
             message: "Bid placed successfully",
         });
