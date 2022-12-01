@@ -76,8 +76,10 @@ exports.getOneAssignedQuestion = async (req, res, next) => {
         
         const submissions = await Submission.find({ submission_for: qn_id, submitted_by: id })
 
+        // console.log(submissions);
+
         if(submissions.length > 0) {
-            response.last_submission = submissions[0].result.source_code;
+            response.last_submission = submissions[submissions.length-1].result.source_code;
         } else {
             response.last_submission = "";
         }
