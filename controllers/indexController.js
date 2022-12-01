@@ -7,7 +7,6 @@ exports.serverStatus = (req, res, next) => {
 
 exports.leaderboard = async(req, res, next) => {
     try {
-
         const leaderboard = []
 
         const team_data = await Team.find({})
