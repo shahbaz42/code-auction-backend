@@ -199,6 +199,15 @@ exports.createQuestion = async (req, res) => {
         base_price
     } = req.body;
 
+    var points =  100;
+    if (difficulty === "easy") {
+        points = 100;
+    } else if (difficulty === "medium") {
+        points = 200;
+    } else if (difficulty === "hard") {
+        points = 300;
+    }
+
     const question = new Question({
         name,
         description,
@@ -207,6 +216,7 @@ exports.createQuestion = async (req, res) => {
         private_test_cases,
         test_case_output,
         difficulty,
+        points,
         base_price,
     })
 
