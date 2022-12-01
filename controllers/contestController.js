@@ -33,7 +33,7 @@ exports.sendLanguages = async (req, res, next) => {
             message : "Something went wrong."
         })
     }
-} 
+}
 
 exports.submitAnswer = async (req, res) => {
     try {
@@ -47,9 +47,25 @@ exports.submitAnswer = async (req, res) => {
 
         const test_case = assigned_qn.test_case;
         const test_case_output = assigned_qn.test_case_output;
+        const private_test_cases = assigned_qn.private_test_cases;
+        var total_private_test_cases = private_test_cases.length;
+        var private_test_cases_pass_count = 0;
 
-        // compile
+        // compile public test case
         const compilation_result = await code_compiler.get_immediete_result(attempted_solution, language_id, test_case, test_case_output);
+
+        // compile private test_case
+        for await (const test_case of private_test_cases) {
+            const input = test_case.input;
+            const output = test_case.output;
+            const private_test_case_compilation_result = await code_compiler.get_immediete_result(attempted_solution, language_id, input, output);
+            // console.log(private_test_case_compilation_result);
+            if(private_test_case_compilation_result.status.id == 3 ){
+                private_test_cases_pass_count += 1;
+            }
+        }
+
+        const private_test_cases_result = `${private_test_cases_pass_count}/${total_private_test_cases} private test cases passing.`
 
         // save the submission
         const new_submission = new Submission({
@@ -57,12 +73,13 @@ exports.submitAnswer = async (req, res) => {
             submission_for : assigned_qn_id,
             submitted_by : req.team._id,
             status : compilation_result.status,
-            result : compilation_result
+            result : compilation_result,
+            private_test_cases_result
         })
         await new_submission.save();
 
         // if the submisstion is accepted and status is pending then update the score`
-        if( compilation_result.status.id == 3 && team_assigned_question.status == "pending" ) {
+        if( compilation_result.status.id == 3 && team_assigned_question.status == "pending" && total_private_test_cases == private_test_cases_pass_count) {
             team.score += assigned_qn.points;
             team_assigned_question.status = "solved";
             team_assigned_question.time_to_solve = Date.now() - team_assigned_question.assigning_time;
@@ -70,18 +87,18 @@ exports.submitAnswer = async (req, res) => {
             await team.save();
 
             return res.status(200).json({
-                message: "Accepted",
+                message: `Accepted!! ${private_test_cases_result}`,
                 result : compilation_result
             });
         } 
         
         // if the submission is accepted but question is already solved
-        if( compilation_result.status.id == 3 && team_assigned_question.status == "solved" ) {
+        if( compilation_result.status.id == 3 && team_assigned_question.status == "solved" && total_private_test_cases == private_test_cases_pass_count) {
             team_assigned_question.submissions.push(new_submission._id);
             await team.save();
             
             return res.status(200).json({
-                message: "Accepted",
+                message: `Accepted!! ${private_test_cases_result}`,
                 result : compilation_result
             });
         }
@@ -91,7 +108,7 @@ exports.submitAnswer = async (req, res) => {
         await team.save();
 
         res.status(200).json({
-            message: "Not Accepted",
+            message: `Not Accepted!! ${private_test_cases_result}`,
             result : compilation_result
         });
         
