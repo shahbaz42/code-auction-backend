@@ -143,7 +143,7 @@ exports.login = async (req, res) => {
         }
 
         if (! team.login_count ) {
-            team.login_count = 1;
+            team.login_count = 0;
         }
 
         // generate jwt
@@ -155,9 +155,9 @@ exports.login = async (req, res) => {
         team.login_count += 1;
         await team.save();
 
-        if (team.login_count > 2 ){
+        if ( team.login_count > process.env.MAX_LOGIN_ATTEMPTS ){
             return res.status(401).json({
-                message: "You can log in on only 2 devices. Please contact coordinators."
+                message: `You can log in on only ${process.env.MAX_LOGIN_ATTEMPTS} devices. Please contact coordinators.`
             });
         }
 
