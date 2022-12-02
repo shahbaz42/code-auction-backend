@@ -142,10 +142,24 @@ exports.login = async (req, res) => {
             });
         }
 
+        if (! team.login_count ) {
+            team.login_count = 1;
+        }
+
         // generate jwt
         const token = jwt.sign({ team_id: team._id }, process.env.JWT_SECRET, {
             expiresIn: "1d"
         });
+
+        // update login_count
+        team.login_count += 1;
+        await team.save();
+
+        if (team.login_count > 2 ){
+            return res.status(401).json({
+                message: "You can log in on only 2 devices. Please contact coordinators."
+            });
+        }
 
         res.status(200).json({
             message: "Login successful",

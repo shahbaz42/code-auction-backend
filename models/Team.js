@@ -11,6 +11,10 @@ const teamSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    login_count: {
+        type: Number,
+        default: 0
+    },
     leader_name :{
         type: String,
         required: true
