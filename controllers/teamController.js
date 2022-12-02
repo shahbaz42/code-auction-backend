@@ -50,10 +50,52 @@ exports.getAssignedQuestions = async (req, res, next) => {
                 path: "assigned_questions",
                 populate: {
                     path: "question_id",
-                    select: "name img_url description test_case difficulty base_price",
+                    select: "name img_url description test_case test_case_output difficulty base_price",
                 }
+                // populate submission also
             })
         res.status(200).json(team_data.assigned_questions);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: "Something went wrong"
+        });
+    }
+}
+
+
+exports.getOneAssignedQuestion = async (req, res, next) => {
+    try {
+        const id = req.team._id;
+        const qn_id = req.params.qn_id;
+        
+        const response = {}
+
+        const question = await Question.findById(qn_id)
+            .select("-__v -private_test_cases -bids -sold_to -sold_at -createdAt -updatedAt");
+        
+        const submissions = await Submission.find({ submission_for: qn_id, submitted_by: id })
+
+        // console.log(submissions);
+
+        if(submissions.length > 0) {
+            response.last_submission = submissions[submissions.length-1].result.source_code;
+        } else {
+            response.last_submission = "";
+        }
+
+        response.question = question;
+        response.last_accepted_submission = "";
+
+        submissions.forEach((submission) => {
+            if (submission.status.id == 3) {
+                response.last_accepted_submission = submission.result.source_code;
+                return;
+            }
+        })
+
+        res.status(200).json(response);
+
     } catch (error) {
         console.log(error);
         res.status(500).json({

@@ -1,11 +1,51 @@
 const Transaction = require("../models/Transactions");
+const Team = require("../models/Team");
 
 exports.serverStatus = (req, res, next) => {
     res.status(200).send("Server is up and running.")
 }
 
-exports.leaderboard = (req, res, next) => {
-    res.send("Leaderboard");
+exports.leaderboard = async(req, res, next) => {
+    try {
+        const leaderboard = []
+
+        const team_data = await Team.find({})
+            .select("team_name score assigned_questions")
+            .sort({score: -1})
+        
+        team_data.forEach(team => {
+            let time_to_solve = 0;
+            team.assigned_questions.forEach(question => {
+                if (question.status === "solved") {
+                    time_to_solve += question.time_to_solve;
+                }
+            })
+            leaderboard.push({
+                team_name: team.team_name,
+                score: team.score,
+                time_to_solve: time_to_solve
+            })
+        })
+
+        // sort leaderboard by score and then by time_to_solve
+        leaderboard.sort((a, b) => {
+            if (a.score === b.score) {
+                return a.time_to_solve - b.time_to_solve;
+            }
+            return b.score - a.score;
+        })
+
+        leaderboard.forEach((team, index) => {
+            team.rank = index + 1;
+        })
+
+        res.status(200).json(leaderboard);
+        
+    } catch (error) {
+        res.status(500).json({
+            message : error.message
+        })
+    }
 }
 
 exports.transactions = async(req, res, next) => {

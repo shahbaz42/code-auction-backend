@@ -20,7 +20,10 @@ const submissionSchema = new mongoose.Schema({
             type : String
         }
     },
-    result : {}
+    result : {},
+    private_test_cases_result : {
+        type : String,
+    }
 })
 
 const Submission = mongoose.model("Submission", submissionSchema);
