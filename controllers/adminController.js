@@ -29,7 +29,7 @@ exports.startAuction = async (req, res) => {
         if (question.status === "bidding") return res.status(400).json({message: "Auction already started"});
         question.status = "bidding";
         await question.save();
-        const msg = `Auction started for question : ${question.name}`;
+        const msg = `Auction started for question : ${question.name} Please refresh the page the page if Question is not visible.`;
         req.io.emit("auction_started", msg );
         return res.status(200).json({
             message: msg
