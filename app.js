@@ -7,6 +7,7 @@ const mongoose = require('mongoose');
 const cors = require('cors')
 const  {createServer} = require('http');
 const  {Server} = require("socket.io")
+const rateLimit = require('express-rate-limit')
 
 
 const indexRouter = require('./routes/indexRouter');
@@ -25,6 +26,14 @@ const io = new Server(httpServer, {
       methods: ["GET", "POST"]
     }
 })
+
+const limiter = rateLimit({
+    windowMs: 1 * 60 * 1000, // 15 minutes
+    max: 2000 // limit each IP to 100 requests per windowMs
+    });
+
+//  apply to all requests
+app.use(limiter);
 
 io.on('connection', (socket) => {
     console.log('a user connected');
