@@ -1,6 +1,7 @@
 # Code-Auction-Backend
 
 ## Description
+Code Auction is a competitive coding website where players get a chance to choose their own questions by participating in the auction.
 Teams of coders and businesspeople compete on the Code-Auction-Portal to place bid and purchase questions and solve them on the integrated code compiler.
 This is the backend for the Code Auction project. It is a REST API built with Node.js, Express.js and SocketIO It uses MongoDB as a database.
 
@@ -27,6 +28,7 @@ HOSTNAME=<frontend_deployment_url>
 JWT_SECRET=<JWT secret>
 MAX_LOGIN_ATTEMPTS=2
 ```
+* MAX_LOGIN_ATTEMPTS is to restrict players from logging in from somewhere else
 
 ## Installation
 1. Clone the repository
